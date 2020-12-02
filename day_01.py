@@ -1,13 +1,14 @@
 """
-Day One
+Day One - Combinations
 """
-
-import sys
 import itertools
+
+import utils
+
 
 if __name__ == '__main__':
 
-    numbers = [int(x) for x in sys.stdin.readlines()]
+    numbers = utils.read_ints_from_lines("in/day_01.txt")
 
     [print(x * y * z)
      for x, y, z in itertools.combinations(numbers, r=3)

@@ -1,9 +1,13 @@
-import sys
+"""
+Day Two - Simple string parsing
+"""
+
+import utils
 
 
 if __name__ == '__main__':
 
-    lines = [x for x in sys.stdin.readlines()]
+    lines = utils.read_strings_from_lines("in/day_02.txt")
 
     valid_lines = 0
 
@@ -20,7 +24,7 @@ if __name__ == '__main__':
 
         if (pw[number_one] == char or pw[number_two] == char) and \
                 not (pw[number_one] == char and pw[number_two] == char):
-            print(line[:-1])
             valid_lines += 1
 
     print(valid_lines)
+
