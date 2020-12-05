@@ -1,5 +1,12 @@
 import warnings
 from typing import List, NamedTuple, Any
+import itertools
+
+
+def pairwise(iterable):
+    a, b = itertools.tee(iterable)
+    next(b, None)
+    return zip(a, b)
 
 
 def read_ints_from_lines(file="input.txt"):
