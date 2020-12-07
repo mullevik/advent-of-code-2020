@@ -10,6 +10,7 @@ if __name__ == '__main__':
 
     bags = {}
 
+    # parse input
     for line in lines:
 
         sp = line.split("contain")
@@ -38,8 +39,9 @@ if __name__ == '__main__':
 
                 bags[bag_name].append((constraint_name, constraint_number))
 
-    queue = ["shiny gold"]
-    visited = {"shiny gold"}
+    # # 
+    # queue = ["shiny gold"]
+    # visited = {"shiny gold"}
     # while queue:
     #     current_bag = queue.pop()
     #
@@ -57,11 +59,8 @@ if __name__ == '__main__':
     # print(len(visited) - 1)
 
     total = 0
-
-    print(bags)
+    queue = ["shiny gold"]
     while queue:
-        print(queue)
-
         current_bag = queue.pop()
 
         for other in bags[current_bag]:
