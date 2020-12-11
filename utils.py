@@ -1,4 +1,5 @@
 import warnings
+import copy
 from typing import List, NamedTuple, Any
 import itertools
 
@@ -43,8 +44,20 @@ class Cords(NamedTuple):
     x: int
     y: int
 
+    def __add__(self, other: Any):
+        if isinstance(other, Cords):
+            return Cords(self.x + other.x, self.y + other.y)
+        elif isinstance(other, tuple):
+            return Cords(self.x + other[0], self.y + other[1])
+        elif isinstance(other, int):
+            return Cords(self.x + other, self.y + other)
+        else:
+            raise NotImplementedError
 
 class Grid2d:
+    """
+    2D grid indexed by (x, y) tuples
+    """
 
     @staticmethod
     def from_string_lines(lines: List[str],
@@ -64,9 +77,50 @@ class Grid2d:
         self.height = h
         self.array = [[default_value for _ in range(w)] for _ in range(h)]
 
+    def eight_neighborhood(self, c: Cords) -> List[Cords]:
+
+        if not isinstance(c, Cords):
+            c = Cords(c[0], c[1])
+
+        x_lb = max(c.x - 1, 0)
+        x_ub = min(c.x + 2, self.width)
+
+        y_lb = max(c.y - 1, 0)
+        y_ub = min(c.y + 2, self.height)
+
+        neighbors = []
+
+        for x in range(x_lb, x_ub):
+            for y in range(y_lb, y_ub):
+
+                if not (x == c.x and y == c.y):
+                    neighbors.append(Cords(x=x, y=y))
+
+        return neighbors
+
     def contains(self, c: Cords) -> bool:
         x, y = c
         return 0 <= x < self.width and 0 <= y < self.height
+
+    def deepcopy(self) -> 'Grid2d':
+        g = Grid2d(self.width, self.height, default_value=".")
+        new_array = copy.deepcopy(self.array)
+        g.array = new_array
+        return g
+
+    def all_coordinates(self) -> List[Cords]:
+        coordinates = []
+        for y in range(self.height):
+            for x in range(self.width):
+                coordinates.append(Cords(x, y))
+        return coordinates
+
+    def all_cells(self) -> List[Any]:
+        cells = []
+        for y in range(self.height):
+            for x in range(self.width):
+                cells.append(self[x, y])
+        return cells
 
     def __setitem__(self, key: Cords, value: Any) -> 'Grid2d':
         assert isinstance(key, tuple)
@@ -78,6 +132,14 @@ class Grid2d:
         assert isinstance(item, tuple)
         x, y = item
         return self.array[y][x]
+
+    def __str__(self):
+        out = ""
+        for y in range(self.height):
+            for x in range(self.width):
+                out += self[x, y]
+            out += "\n"
+        return out
 
 
 class TreeMap:
