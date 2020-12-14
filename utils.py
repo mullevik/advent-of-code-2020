@@ -54,6 +54,27 @@ class Cords(NamedTuple):
         else:
             raise NotImplementedError
 
+    def __sub__(self, other):
+        if isinstance(other, Cords):
+            return Cords(self.x - other.x, self.y - other.y)
+        elif isinstance(other, tuple):
+            return Cords(self.x - other[0], self.y - other[1])
+        else:
+            raise NotImplementedError
+
+    def __mul__(self, other):
+        if isinstance(other, int):
+            return Cords(self.x * other, self.y * other)
+        else:
+            raise NotImplementedError
+
+    def __rmul__(self, other):
+        if isinstance(other, int):
+            return Cords(self.x * other, self.y * other)
+        else:
+            raise NotImplementedError
+
+
 class Grid2d:
     """
     2D grid indexed by (x, y) tuples
@@ -147,6 +168,31 @@ class TreeMap:
     CELL_TREE: str = "#"
 
 
+def decimal_to_bit_list(number: int, bit_len: int) -> List[bool]:
+    bits = [False] * bit_len
+
+    for i in range(bit_len):
+
+        divider = 2 ** (bit_len - 1 - i)
+
+        times = number // divider
+
+        if times > 0:
+            bits[i] = True
+
+        number = number % divider
+
+    return bits
+
+
+def bit_list_to_decimal(bit_list: List[int]) -> int:
+    accumulator = 0
+    for i, bit in enumerate(reversed(bit_list)):
+        if bit:
+            accumulator += 2 ** i
+    return accumulator
+
+
 def _test_read_ints_from_lines():
     numbers = read_ints_from_lines(file="test_inputs/ints.txt")
     assert len(numbers) == 4
@@ -195,9 +241,26 @@ def _test_grid_2d():
     assert not tm.contains((4, 2))
 
 
+def _test_bits():
+
+    bit_list = decimal_to_bit_list(11, 36)
+    assert len(bit_list) == 36
+    assert bit_list[35]
+    assert bit_list[34]
+    assert not bit_list[33]
+    assert bit_list[32]
+    assert not bit_list[31]
+    assert not bit_list[0]
+
+    assert bit_list_to_decimal([True, False, True, True]) == 11
+    assert bit_list_to_decimal([False, True, False, True, True]) == 11
+
+
 if __name__ == '__main__':
     _test_read_ints_from_lines()
     _test_read_floats_from_lines()
     _test_read_strings_from_lines()
 
     _test_grid_2d()
+
+    _test_bits()
